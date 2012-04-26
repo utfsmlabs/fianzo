@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+<ul>
+    {% for type in types %}
+    <li>{{type.description}}</li>
+    <ul>
+        {% for asset in type.assets %}
+        <li>{{asset.name}}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</ul>
+{% endblock %}
