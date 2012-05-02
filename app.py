@@ -1,18 +1,24 @@
 #!/usr/bin/env python2
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
+import ldapUsers
 
 class default_config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///asdf.db'
     DEBUG = True
+    LDAP_URI = 'ldap://localhost:3890'
+    LDAP_SEARCH_ATTR = 'uid'
+    LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
 
 app = Flask(__name__)
 app.config.from_object(default_config)
 app.config.from_envvar('INVENTORY_SETTINGS', silent=True)
 
 db = SQLAlchemy(app)
+
+ldap = ldapUsers.ldapConnection(app)
 
 # A word about users:
 # In this particular implementation we have no table for users since they
@@ -50,6 +56,9 @@ class Asset(db.Model):
     def __repr__(self):
         return '<Asset %r>' % self.name
 
+    def lended_to_name(self):
+        return ldapUsers.extractNamingAttribute(self.lended_to)
+
 class AssetLog(db.Model):
     '''
     Log used for accounting. Isn't actually checked by the application
@@ -66,10 +75,22 @@ class AssetLog(db.Model):
         self.action = action
         self.lended_to = lended_to
 
+    def lended_to_name(self):
+        return ldapUsers.extractNamingAttribute(self.lended_to)
+
 @app.route('/')
 def show_assets():
     types = AssetType.query.all()
     return render_template('show_assets.html', types = types)
+
+@app.route('/user/check/<attr>')
+def check_user(attr):
+    dn = ldap.getDN(attr)
+    if dn == None:
+        return jsonify(user='invalid')
+    else:
+        return jsonify(user='valid')
+
 
 if __name__ == '__main__':
     app.run()
