@@ -1,10 +1,41 @@
 <!DOCTYPE HTML>
-<html>
+<html class="no-js">
     <head>
-        <title>hola!</title>
+        <title>Fianzo{% block title %}{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css')}}"/>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fianzo.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-responsive.css')}}"/>
+        <script src="{{ url_for('static', filename='js/modernizr.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jquery-1.7.2.js') }}"> </script>
+        <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap-collapse.js') }}"></script>
+        {% block head_extra %}{% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" id="navbar-logo" href="{{ url_for('show_assets') }}">Fianzo</a>
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            <li class="active"><a href="{{ url_for('show_assets') }}">Lend</a></li>
+                            <li><a href="#">Edit</a></li>
+                            <li><a href="#">View Log</a></li>
+                        </ul>
+                        <div class="nav pull-right">
+                            <a class="btn btn-inverse" href="#">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
     </body>
 </html>

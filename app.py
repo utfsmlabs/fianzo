@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
 import ldapUsers
