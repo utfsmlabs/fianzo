@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, jsonify, request, flash, redirect, abort, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 import ldapUsers
 
 class default_config:
@@ -31,11 +31,14 @@ class AssetType(db.Model):
     Category of the asset, such as "Laptop" or "iPad"
     '''
     id = db.Column(db.Integer, primary_key = True)
-    description = db.Column(db.String, unique=True)
+    name = db.Column(db.String, unique=True)
+    loan_period = db.Column(db.Interval)
+
     assets = db.relationship('Asset', backref='type')
 
-    def __init__(self, description):
-        self.description = description
+    def __init__(self, name, loan_period = timedelta(minutes=90)):
+        self.name = name
+        self.loan_period = loan_period
     
     def __repr__(self):
         return '<Aset type %r>' % self.description
@@ -49,7 +52,9 @@ class Asset(db.Model):
     name = db.Column(db.String)
     type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'))
     lended_to = db.Column(db.String)
-    description = db.Column(db.Text, default = '')
+    loan_ends_at = db.Column(db.DateTime(timezone=True))
+
+    logs = db.relationship('AssetLog', backref='asset')
 
     def __init__(self, name, type=None, type_id=None):
         self.name = name
@@ -66,6 +71,12 @@ class Asset(db.Model):
 
     def available(self):
         if self.lended_to == '' or self.lended_to is None:
+            return True
+        else:
+            return False
+
+    def overdue(self):
+        if self.loan_ends_at and self.loan_ends_at < datetime.now():
             return True
         else:
             return False
@@ -98,7 +109,8 @@ class AssetLog(db.Model):
 @app.route('/')
 def show_assets():
     types = AssetType.query.all()
-    return render_template('show_assets.html', types = types)
+    overdue_assets = Asset.query.filter(Asset.loan_ends_at < datetime.now())
+    return render_template('show_assets.html', types = types, overdue_assets = overdue_assets)
 
 
 @app.route('/user/check/<attr>')
@@ -131,6 +143,7 @@ def lend_asset(asset_id):
                     error='%s not found' % request.form['lended_to'])
         
         asset.lended_to = dn
+        asset.loan_ends_at = datetime.now() + asset.type.loan_period
         log = AssetLog(dn, 'checkout', asset)
         db.session.add(asset)
         db.session.add(log)
@@ -148,6 +161,7 @@ def return_asset(asset_id):
         abort(404)
     log = AssetLog(asset.lended_to, 'checkin', asset)
     asset.lended_to = None
+    asset.loan_ends_at = None
     db.session.add(log)
     db.session.add(asset)
     db.session.commit()

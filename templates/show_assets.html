@@ -7,7 +7,7 @@
 <div class="row-fluid">
     <div id="types-list" class="span8">
         {% for type in types %}
-        <h2><a href="#" data-toggle="collapse" data-target="#assets-{{type.id}}">{{type.description}}</a></h2>
+        <h2><a href="#" data-toggle="collapse" data-target="#assets-{{type.id}}">{{type.name}}</a></h2>
         <div class="collapse" id="assets-{{type.id}}">
             <table class="assets-table table table-bordered">
                 <thead>
@@ -24,7 +24,12 @@
                         </td>
                         {% else %}
                         <td>
-                            <span class="label label-important">Unavailable</span>
+                            {% if asset.overdue() %}
+                            <span class="label label-important">Overdue</span>
+                            {% else %}
+
+                            <span class="label label-info">Unavailable</span>
+                            {% endif %}
                             ({{asset.lended_to_name()}})
                         </td>
                         <td>
@@ -40,7 +45,17 @@
         {% endfor %}
     </div>
     <div id="sidebar" class="span4">
-        sidebar!
+        <div id="overdue">
+            <h2>Overdue</h2>
+            {% for asset in overdue_assets %}
+            <p>
+            <a href="{{url_for('return_asset', asset_id=asset.id)}}" class="btn btn-mini btn-primary">
+                <i class="icon-check icon-white"></i>Return</a>
+            <strong>{{asset.name}}</strong> - 
+            <em>{{asset.type.name}}</em> ({{asset.lended_to_name()}}) 
+            </p>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}
