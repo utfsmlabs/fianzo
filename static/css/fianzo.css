@@ -8,10 +8,6 @@ body {
     text-shadow: rgba(0, 0, 0, 0.5) 2px 2px 4px;
 }
 
-.assets-list {
-    list-style-type: none;
-}
-
 #types-list h2 a {
     display: block;
     padding: 0;
@@ -21,5 +17,4 @@ body {
 #types-list h2:hover {
     background: #eee;
 }
-
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, flash, redirect, abort, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
 import ldapUsers
@@ -11,6 +11,7 @@ class default_config:
     LDAP_URI = 'ldap://localhost:3890'
     LDAP_SEARCH_ATTR = 'uid'
     LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
+    SECRET_KEY = 'development secret key'
 
 app = Flask(__name__)
 app.config.from_object(default_config)
@@ -39,6 +40,7 @@ class AssetType(db.Model):
     def __repr__(self):
         return '<Aset type %r>' % self.description
 
+
 class Asset(db.Model):
     '''
     Particular, singular asset, identified by serial number
@@ -49,15 +51,25 @@ class Asset(db.Model):
     lended_to = db.Column(db.String)
     description = db.Column(db.Text, default = '')
 
-    def __init__(self, name, type):
+    def __init__(self, name, type=None, type_id=None):
         self.name = name
-        self.type_id = type.id
+        if type:
+            self.type_id = type.id
+        else:
+            self.type_id=type_id
 
     def __repr__(self):
         return '<Asset %r>' % self.name
 
     def lended_to_name(self):
         return ldapUsers.extractNamingAttribute(self.lended_to)
+
+    def available(self):
+        if self.lended_to == '' or self.lended_to is None:
+            return True
+        else:
+            return False
+
 
 class AssetLog(db.Model):
     '''
@@ -69,19 +81,25 @@ class AssetLog(db.Model):
     action = db.Column(db.Enum('checkin', 'checkout'))
     lended_to = db.Column(db.String)
 
-    def __init__(self, asset, action, lended_to):
+    def __init__(self, lended_to, action, asset=None, asset_id=None):
         self.time = datetime.now()
-        self.asset_id = asset.id
+        if asset:
+            self.asset_id = asset.id
+        else:
+            self.asset_id = asset_id
+
         self.action = action
         self.lended_to = lended_to
 
     def lended_to_name(self):
         return ldapUsers.extractNamingAttribute(self.lended_to)
 
+
 @app.route('/')
 def show_assets():
     types = AssetType.query.all()
     return render_template('show_assets.html', types = types)
+
 
 @app.route('/user/check/<attr>')
 def check_user(attr):
@@ -91,6 +109,51 @@ def check_user(attr):
     else:
         return jsonify(user='valid')
 
+
+@app.route('/asset/<int:asset_id>/lend', methods=['POST', 'GET'])
+def lend_asset(asset_id):
+    asset = Asset.query.get(asset_id)
+
+    if asset is None:
+        abort(404)
+    if asset.lended_to:
+        print asset.lended_to
+        flash('%s is already lent' % asset.name)
+        return redirect(url_for('show_assets'))
+
+    if request.method == 'GET':
+        return render_template('lend_asset.html', asset_id=asset_id)
+    elif request.method == 'POST':
+        dn = ldap.getDN(request.form['lended_to'])
+        if not dn:
+            return render_template('lend_asset.html',
+                    asset_id=asset_id,
+                    error='%s not found' % request.form['lended_to'])
+        
+        asset.lended_to = dn
+        log = AssetLog(dn, 'checkout', asset)
+        db.session.add(asset)
+        db.session.add(log)
+        db.session.commit()
+
+        flash('Lended %s to %s' % (asset.name, asset.lended_to_name()))
+
+        return redirect(url_for('show_assets'))
+
+
+@app.route('/asset/(<int:asset_id>/return')
+def return_asset(asset_id):
+    asset = Asset.query.get(asset_id)
+    if asset is None:
+        abort(404)
+    log = AssetLog(asset.lended_to, 'checkin', asset)
+    asset.lended_to = None
+    db.session.add(log)
+    db.session.add(asset)
+    db.session.commit()
+
+    flash('Returned %s' % asset.name)
+    return redirect(url_for('show_assets'))
 
 if __name__ == '__main__':
     app.run()

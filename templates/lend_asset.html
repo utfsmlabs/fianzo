@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="row_fluid">
+    {% if error %}
+    <div class="alert alert-error">
+        <button class="close" data-dismiss="alert">×</button>
+        {{error}}
+    </div>
+    {% endif %}
+    <div class="span12">
+        <form class="form-horizontal" method="POST" action="{{url_for('lend_asset', asset_id = asset_id)}}">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="lended_to">User</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" name="lended_to"/>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lend</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+{% endblock %}
