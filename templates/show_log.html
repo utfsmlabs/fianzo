@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %} — Log {% endblock %}
+{% block nav_block %}
+<li><a href="{{ url_for('show_assets') }}">Lend</a></li>
+<li><a href="#">Edit</a></li>
+<li class="active"><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
+{% endblock %}
+{% block body %}
+
+<div class="row-fluid">
+    <div class="span12">
+        <table class="log-table table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Action</th>
+                    <th>Asset</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in pagination.items %}
+                <tr>
+                    <td>{{log.time.strftime('%a %d-%b-%y %H:%M:%S')}}</td>
+                    <td>{{log.action}}</td>
+                    <td>{{log.asset.name}}</td>
+                    <td>{{log.lended_to_name()}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {{ render_pagination(pagination, 'show_log') }}
+    </div>
+</div>
+{% endblock %}
+

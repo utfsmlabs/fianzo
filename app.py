@@ -113,21 +113,10 @@ def show_assets():
     return render_template('show_assets.html', types = types, overdue_assets = overdue_assets)
 
 
-@app.route('/user/check/<attr>')
-def check_user(attr):
-    dn = ldap.getDN(attr)
-    if dn == None:
-        return jsonify(user='invalid')
-    else:
-        return jsonify(user='valid')
-
-
 @app.route('/asset/<int:asset_id>/lend', methods=['POST', 'GET'])
 def lend_asset(asset_id):
-    asset = Asset.query.get(asset_id)
+    asset = Asset.query.get_or_404(asset_id)
 
-    if asset is None:
-        abort(404)
     if asset.lended_to:
         print asset.lended_to
         flash('%s is already lent' % asset.name)
@@ -156,9 +145,7 @@ def lend_asset(asset_id):
 
 @app.route('/asset/(<int:asset_id>/return')
 def return_asset(asset_id):
-    asset = Asset.query.get(asset_id)
-    if asset is None:
-        abort(404)
+    asset = Asset.query.get_or_404(asset_id)
     log = AssetLog(asset.lended_to, 'checkin', asset)
     asset.lended_to = None
     asset.loan_ends_at = None
@@ -169,6 +156,13 @@ def return_asset(asset_id):
     flash('Returned %s' % asset.name)
     return redirect(url_for('show_assets'))
 
+
+@app.route('/log/<int:page>')
+def show_log(page):
+    pagination = AssetLog.query.order_by(
+            db.desc(AssetLog.time)).paginate(page, 30)
+    return render_template('show_log.html', pagination=pagination)
+
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
 

@@ -1,4 +1,24 @@
 <!DOCTYPE HTML>
+{% macro render_pagination(pagination, endpoint) %}
+<div class="pagination">
+    <ul>
+        {%- for page in pagination.iter_pages() %}
+        <li>
+        {% if page %}
+        {% if page != pagination.page %}
+        <a href="{{ url_for(endpoint, page=page) }}">
+        {% else %}
+        <a class="active" href="{{ url_for(endpoint, page=page) }}">
+        {% endif -%}
+        {{ page }}</a>
+        {% else %}
+        <a class="disabled" href="#">…</a>
+        {% endif %}
+        </li>
+        {%- endfor %}
+    </ul>
+</div>
+{% endmacro %}
 <html class="no-js">
     <head>
         <title>Fianzo{% block title %}{% endblock %}</title>
@@ -23,9 +43,11 @@
                     <a class="brand" id="navbar-logo" href="{{ url_for('show_assets') }}">Fianzo</a>
                     <div class="nav-collapse">
                         <ul class="nav">
+                            {% block nav_block %}
                             <li class="active"><a href="{{ url_for('show_assets') }}">Lend</a></li>
                             <li><a href="#">Edit</a></li>
-                            <li><a href="#">View Log</a></li>
+                            <li><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
+                            {% endblock %}
                         </ul>
                         <div class="nav pull-right">
                             <a class="btn btn-inverse" href="#">Logout</a>
