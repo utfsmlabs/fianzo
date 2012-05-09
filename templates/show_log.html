@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block title %} — Log {% endblock %}
-{% block nav_block %}
+{% block navigation %}
 <li><a href="{{ url_for('show_assets') }}">Lend</a></li>
 <li><a href="#">Edit</a></li>
 <li class="active"><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
@@ -22,7 +22,12 @@
                 {% for log in pagination.items %}
                 <tr>
                     <td>{{log.time.strftime('%a %d-%b-%y %H:%M:%S')}}</td>
-                    <td>{{log.action}}</td>
+                    <td>
+                        {{log.action}}
+                        {%- if log.return_status and not log.return_status == 'late' -%}
+                        ({{log.return_status}})
+                        {%- endif -%}
+                    </td>
                     <td>{{log.asset.name}}</td>
                     <td>{{log.lended_to_name()}}</td>
                 </tr>

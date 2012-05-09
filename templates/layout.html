@@ -43,10 +43,10 @@
                     <a class="brand" id="navbar-logo" href="{{ url_for('show_assets') }}">Fianzo</a>
                     <div class="nav-collapse">
                         <ul class="nav">
-                            {% block nav_block %}
-                            <li class="active"><a href="{{ url_for('show_assets') }}">Lend</a></li>
-                            <li><a href="#">Edit</a></li>
-                            <li><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
+                            {% block navigation %}
+                            <li class=""><a href="{{ url_for('show_assets') }}">Lend</a></li>
+                            <li class=""><a href="#">Edit</a></li>
+                            <li class=""><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
                             {% endblock %}
                         </ul>
                         <div class="nav pull-right">

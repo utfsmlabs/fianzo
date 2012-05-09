@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 from app import db, AssetType, Asset
+db.drop_all()
 db.create_all()
 
 t = AssetType('Laptop')

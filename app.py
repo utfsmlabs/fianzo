@@ -89,8 +89,9 @@ class AssetLog(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'))
     time = db.Column(db.DateTime(timezone=True))
-    action = db.Column(db.Enum('checkin', 'checkout'))
+    action = db.Column(db.Enum('lend', 'return'))
     lended_to = db.Column(db.String)
+    return_status = db.Column(db.Enum('regular', 'late'))
 
     def __init__(self, lended_to, action, asset=None, asset_id=None):
         self.time = datetime.now()
@@ -133,7 +134,7 @@ def lend_asset(asset_id):
         
         asset.lended_to = dn
         asset.loan_ends_at = datetime.now() + asset.type.loan_period
-        log = AssetLog(dn, 'checkout', asset)
+        log = AssetLog(dn, 'lend', asset)
         db.session.add(asset)
         db.session.add(log)
         db.session.commit()
@@ -146,7 +147,13 @@ def lend_asset(asset_id):
 @app.route('/asset/(<int:asset_id>/return')
 def return_asset(asset_id):
     asset = Asset.query.get_or_404(asset_id)
-    log = AssetLog(asset.lended_to, 'checkin', asset)
+    log = AssetLog(asset.lended_to, 'return', asset)
+
+    if asset.overdue() is True:
+        log.return_status = 'late'
+    else:
+        log.return_status = 'regular'
+
     asset.lended_to = None
     asset.loan_ends_at = None
     db.session.add(log)
@@ -162,6 +169,12 @@ def show_log(page):
     pagination = AssetLog.query.order_by(
             db.desc(AssetLog.time)).paginate(page, 30)
     return render_template('show_log.html', pagination=pagination)
+
+
+@app.route('/log/')
+def redirect_to_show_log():
+    return redirect(url_for('show_log', page=1))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
