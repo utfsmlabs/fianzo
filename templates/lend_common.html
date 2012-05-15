@@ -2,6 +2,6 @@
 {% block title %} — Lending {% endblock %}
 {% block navigation %}
 <li class="active"><a href="{{ url_for('show_assets') }}">Lend</a></li>
-<li><a href="#">Edit</a></li>
-<li><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
+<li class=""><a href="{{ url_for('show_assets_for_edit') }}">Edit</a></li>
+<li class=""><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
 {% endblock %}

@@ -2,20 +2,22 @@
 {% block title %} — Log {% endblock %}
 {% block navigation %}
 <li><a href="{{ url_for('show_assets') }}">Lend</a></li>
-<li><a href="#">Edit</a></li>
+<li class=""><a href="{{ url_for('show_assets_for_edit') }}">Edit</a></li>
 <li class="active"><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
 {% endblock %}
 {% block body %}
-
+<div class="page-header">
+    <h1>Log</h1>
+</div>
 <div class="row-fluid">
     <div class="span12">
         <table class="log-table table">
             <thead>
                 <tr>
-                    <th>Time</th>
-                    <th>Action</th>
-                    <th>Asset</th>
-                    <th>User</th>
+                    <th><i class="icon-time"></i>Time</th>
+                    <th><i class="icon-share-alt"></i>Action</th>
+                    <th><i class="icon-asterisk"></i>Asset</th>
+                    <th><i class="icon-user"></i>User</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,9 +25,14 @@
                 <tr>
                     <td>{{log.time.strftime('%a %d-%b-%y %H:%M:%S')}}</td>
                     <td>
-                        {{log.action}}
-                        {%- if log.return_status and not log.return_status == 'late' -%}
-                        ({{log.return_status}})
+                        {%- if log.action == 'lend' -%}
+                        <i class="icon-share"></i>Lend
+                        {%- else -%}
+                        {%- if log.return_status and not log.return_status == 'regular' -%}
+                        <i class="icon-warning-sign"></i>Return ({{log.return_status}})
+                        {%- else -%}
+                        <i class="icon-check"></i>Return
+                        {%- endif -%}
                         {%- endif -%}
                     </td>
                     <td>{{log.asset.name}}</td>

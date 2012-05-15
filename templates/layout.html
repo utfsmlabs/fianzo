@@ -45,7 +45,7 @@
                         <ul class="nav">
                             {% block navigation %}
                             <li class=""><a href="{{ url_for('show_assets') }}">Lend</a></li>
-                            <li class=""><a href="#">Edit</a></li>
+                            <li class=""><a href="{{ url_for('show_assets_for_edit') }}">Edit</a></li>
                             <li class=""><a href="{{ url_for('show_log', page = 1)}}">View Log</a></li>
                             {% endblock %}
                         </ul>

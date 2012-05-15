@@ -164,6 +164,12 @@ def return_asset(asset_id):
     return redirect(url_for('show_assets'))
 
 
+@app.route('/edit')
+def show_assets_for_edit():
+    types = AssetType.query.all()
+    return render_template('show_assets_for_edit.html', types = types)
+
+
 @app.route('/log/<int:page>')
 def show_log(page):
     pagination = AssetLog.query.order_by(

@@ -1,0 +1,31 @@
+{% extends "edit_common.html" %}
+{% block body %}
+<div class="page-header">
+    <h1>Lending</h1>
+</div>
+<div class="row-fluid">
+    <div id="assets-edit-list" class="span12">
+        <div class="btn-group">
+            <a class="btn">New asset type</a>
+            <a class="btn">New asset</a>
+        </div>
+        <ul>
+        {% for type in types %}
+        <li>
+        <a href="#" class="btn btn-danger btn-small"><i class="icon-remove icon-white"></i></a>
+        <strong>{{type.name}}</strong>
+        <ul>
+            {% for asset in type.assets %}
+            <li>
+            <a href="#" class="btn btn-danger btn-mini"><i class="icon-remove icon-white"></i></a>
+            {{asset.name}}
+            </li>
+            {% endfor %}
+        </ul>
+        </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
