@@ -1,8 +1,12 @@
 #!/usr/bin/env python2
 
-from flask import Flask, render_template, jsonify, request, flash, redirect, abort, url_for
-from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+from functools import wraps
+
+from flask import Flask, render_template, jsonify, request, flash, redirect,\
+        abort, url_for, session
+from flask.ext.sqlalchemy import SQLAlchemy
+
 import ldapUsers
 
 class default_config:
@@ -15,7 +19,7 @@ class default_config:
 
 app = Flask(__name__)
 app.config.from_object(default_config)
-app.config.from_envvar('INVENTORY_SETTINGS', silent=True)
+app.config.from_envvar('FIANZO_SETTINGS', silent=True)
 
 db = SQLAlchemy(app)
 
@@ -107,7 +111,36 @@ class AssetLog(db.Model):
         return ldapUsers.extractNamingAttribute(self.lended_to)
 
 
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'username' in session:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('login'))
+    return decorated
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        if ldap.search_and_auth(
+                request.form['username'], request.form['password']):
+            session['username'] = request.form['username']
+            return redirect(url_for('show_assets'))
+        else:
+            flash('incorrect username or password')
+            return redirect(url_for('login'))
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('show_assets'))
+
+
 @app.route('/')
+@requires_auth
 def show_assets():
     types = AssetType.query.all()
     overdue_assets = Asset.query.filter(Asset.loan_ends_at < datetime.now())
@@ -115,11 +148,11 @@ def show_assets():
 
 
 @app.route('/asset/<int:asset_id>/lend', methods=['POST', 'GET'])
+@requires_auth
 def lend_asset(asset_id):
     asset = Asset.query.get_or_404(asset_id)
 
     if asset.lended_to:
-        print asset.lended_to
         flash('%s is already lent' % asset.name)
         return redirect(url_for('show_assets'))
 
@@ -145,6 +178,7 @@ def lend_asset(asset_id):
 
 
 @app.route('/asset/(<int:asset_id>/return')
+@requires_auth
 def return_asset(asset_id):
     asset = Asset.query.get_or_404(asset_id)
     log = AssetLog(asset.lended_to, 'return', asset)
@@ -165,15 +199,17 @@ def return_asset(asset_id):
 
 
 @app.route('/edit')
+@requires_auth
 def show_assets_for_edit():
     types = AssetType.query.all()
     return render_template('show_assets_for_edit.html', types = types)
 
 
 @app.route('/log/<int:page>')
+@requires_auth
 def show_log(page):
     pagination = AssetLog.query.order_by(
-            db.desc(AssetLog.time)).paginate(page, 30)
+            db.desc(AssetLog.time)).paginate(page, 15)
     return render_template('show_log.html', pagination=pagination)
 
 

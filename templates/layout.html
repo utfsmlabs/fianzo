@@ -50,7 +50,9 @@
                             {% endblock %}
                         </ul>
                         <div class="nav pull-right">
-                            <a class="btn btn-inverse" href="#">Logout</a>
+                            {% block session_action %}
+                            <a class="btn btn-inverse" href="{{ url_for('logout') }}">Logout</a>
+                            {% endblock %}
                         </div>
                     </div>
                 </div>

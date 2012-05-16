@@ -10,7 +10,6 @@ class ldapConnection:
 
     def search(self, attr):
         searchFilter = '(%s=%s)' % (self.searchAttribute, attr)
-        print searchFilter
 
         conn = ldap.initialize(self.uri)
         conn.simple_bind_s()
@@ -27,5 +26,17 @@ class ldapConnection:
         else:
             return None
 
+    def search_and_auth(self, attr, passwd):
+        dn = self.getDN(attr)
+        
+        conn = ldap.initialize(self.uri)
+        try:
+            conn.simple_bind_s(dn, passwd)
+            return True
+        except ldap.INVALID_CREDENTIALS:
+            return False
+
+
 def extractNamingAttribute(dn):
     return dn.split(',')[0].split('=')[-1]
+
