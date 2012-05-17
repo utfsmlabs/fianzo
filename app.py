@@ -16,6 +16,7 @@ class default_config:
     LDAP_SEARCH_ATTR = 'uid'
     LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
     SECRET_KEY = 'development secret key'
+    ADMINS = set(['javier.aravena'])
 
 app = Flask(__name__)
 app.config.from_object(default_config)
@@ -120,12 +121,19 @@ def requires_auth(f):
             return redirect(url_for('login'))
     return decorated
 
+@app.context_processor
+def user_processor():
+    u = None
+    if 'username' in session:
+        u = session['username']
+    return dict(username=u)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
     else:
-        if ldap.search_and_auth(
+        if request.form['username'] in app.config['ADMINS'] and ldap.search_and_auth(
                 request.form['username'], request.form['password']):
             session['username'] = request.form['username']
             return redirect(url_for('show_assets'))
