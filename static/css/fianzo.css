@@ -18,3 +18,21 @@ body {
     background: #eee;
 }
 
+#login-form {
+    width: 38em;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #ddd;
+    padding-top: 2ex;
+}
+
+#login-form h1 {
+    text-align: center;
+    font-weight: bold;
+    text-shadow: rgba(0, 0, 0, 0.5) 2px 2px 4px;
+    margin-bottom: 1ex;
+}
+
+#login-form form, #login-form .form-actions{
+    margin-bottom: 0;
+}
