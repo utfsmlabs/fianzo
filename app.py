@@ -35,9 +35,9 @@ class AssetType(db.Model):
     '''
     Category of the asset, such as "Laptop" or "iPad"
     '''
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String, unique=True)
-    loan_period = db.Column(db.Interval)
+    id = db.Column(db.Integer, primary_key = True, nullable=False)
+    name = db.Column(db.String, unique=True, nullable=False)
+    loan_period = db.Column(db.Interval, nullable=False)
 
     assets = db.relationship('Asset', backref='type')
 
@@ -53,9 +53,9 @@ class Asset(db.Model):
     '''
     Particular, singular asset, identified by serial number
     '''
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String)
-    type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'))
+    id = db.Column(db.Integer, primary_key = True, nullable=False)
+    name = db.Column(db.String, nullable=False)
+    type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'), nullable=False)
     lended_to = db.Column(db.String)
     loan_ends_at = db.Column(db.DateTime(timezone=True))
 
@@ -91,13 +91,13 @@ class AssetLog(db.Model):
     '''
     Log used for accounting. Isn't actually checked by the application
     '''
-    id = db.Column(db.Integer, primary_key = True)
-    asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'))
-    time = db.Column(db.DateTime(timezone=True))
-    action = db.Column(db.Enum('lend', 'return'))
-    lended_to = db.Column(db.String)
-    return_status = db.Column(db.Enum('regular', 'late'))
-    action_by = db.Column(db.String)
+    id = db.Column(db.Integer, primary_key = True, nullable=False)
+    asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=False)
+    time = db.Column(db.DateTime(timezone=True), nullable=False)
+    action = db.Column(db.Enum('lend', 'return'), nullable=False)
+    lended_to = db.Column(db.String, nullable=False)
+    return_status = db.Column(db.Enum('regular', 'late'), nullable=False)
+    action_by = db.Column(db.String, nullable=False)
 
     def __init__(self, lended_to, action, action_by, asset=None, asset_id=None):
         self.time = datetime.now()
