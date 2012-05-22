@@ -18,6 +18,7 @@
                     <th><i class="icon-share-alt"></i>Action</th>
                     <th><i class="icon-asterisk"></i>Asset</th>
                     <th><i class="icon-user"></i>User</th>
+                    <th><i class="icon-eye-open"></i>Action by</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,6 +38,7 @@
                     </td>
                     <td>{{log.asset.name}}</td>
                     <td>{{log.lended_to_name()}}</td>
+                    <td>{{log.action_by}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -97,8 +97,9 @@ class AssetLog(db.Model):
     action = db.Column(db.Enum('lend', 'return'))
     lended_to = db.Column(db.String)
     return_status = db.Column(db.Enum('regular', 'late'))
+    action_by = db.Column(db.String)
 
-    def __init__(self, lended_to, action, asset=None, asset_id=None):
+    def __init__(self, lended_to, action, action_by, asset=None, asset_id=None):
         self.time = datetime.now()
         if asset:
             self.asset_id = asset.id
@@ -107,6 +108,7 @@ class AssetLog(db.Model):
 
         self.action = action
         self.lended_to = lended_to
+        self.action_by = action_by
 
     def lended_to_name(self):
         return ldapUsers.extractNamingAttribute(self.lended_to)
@@ -175,7 +177,7 @@ def lend_asset(asset_id):
         
         asset.lended_to = dn
         asset.loan_ends_at = datetime.now() + asset.type.loan_period
-        log = AssetLog(dn, 'lend', asset)
+        log = AssetLog(dn, 'lend', session['username'], asset=asset)
         db.session.add(asset)
         db.session.add(log)
         db.session.commit()
@@ -189,7 +191,7 @@ def lend_asset(asset_id):
 @requires_auth
 def return_asset(asset_id):
     asset = Asset.query.get_or_404(asset_id)
-    log = AssetLog(asset.lended_to, 'return', asset)
+    log = AssetLog(asset.lended_to, 'return', session['username'], asset=asset)
 
     if asset.overdue() is True:
         log.return_status = 'late'

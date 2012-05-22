@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 {% macro render_pagination(pagination, endpoint) %}
-<div class="pagination">
+<div class="pagination pagination-centered">
     <ul>
         {%- for page in pagination.iter_pages() %}
         <li>
