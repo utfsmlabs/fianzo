@@ -21,7 +21,7 @@
 
 {% macro render_field(field) %}
 <div class="control-group">
-    <label class="control-label">{{ field.label }}</label>
+    <label class="control-label" for="{{ field.id }}">{{ field.label }}</label>
     <div class="controls">{{ field(**kwargs)|safe }}
         {% if field.errors %}
         <div class="errors">
