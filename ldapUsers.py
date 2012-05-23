@@ -33,7 +33,7 @@ class ldapConnection:
         try:
             conn.simple_bind_s(dn, passwd)
             return True
-        except ldap.INVALID_CREDENTIALS:
+        except (ldap.INVALID_CREDENTIALS, ldap.UNWILLING_TO_PERFORM):
             return False
 
 

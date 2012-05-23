@@ -8,6 +8,7 @@ from flask import Flask, render_template, jsonify, request, flash, redirect,\
 from flask.ext.sqlalchemy import SQLAlchemy
 
 import ldapUsers
+import forms
 
 class default_config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///asdf.db'
@@ -132,16 +133,15 @@ def user_processor():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-    else:
-        if request.form['username'] in app.config['ADMINS'] and ldap.search_and_auth(
-                request.form['username'], request.form['password']):
-            session['username'] = request.form['username']
+    form = forms.loginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        if form.username.data in app.config['ADMINS'] and ldap.search_and_auth(
+                form.username.data, form.password.data):
+            session['username'] = form.username.data
             return redirect(url_for('show_assets'))
         else:
             flash('incorrect username or password')
-            return redirect(url_for('login'))
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout():

@@ -1,24 +1,4 @@
 <!DOCTYPE HTML>
-{% macro render_pagination(pagination, endpoint) %}
-<div class="pagination pagination-centered">
-    <ul>
-        {%- for page in pagination.iter_pages() %}
-        <li>
-        {% if page %}
-        {% if page != pagination.page %}
-        <a href="{{ url_for(endpoint, page=page) }}">
-        {% else %}
-        <a class="active" href="{{ url_for(endpoint, page=page) }}">
-        {% endif -%}
-        {{ page }}</a>
-        {% else %}
-        <a class="disabled" href="#">…</a>
-        {% endif %}
-        </li>
-        {%- endfor %}
-    </ul>
-</div>
-{% endmacro %}
 <html class="no-js">
     <head>
         <title>Fianzo{% block title %}{% endblock %}</title>

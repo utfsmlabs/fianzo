@@ -1,3 +1,4 @@
+{% import "macros.html" as m %}
 <!DOCTYPE HTML>
 <html class="no-js">
     <head>
@@ -29,18 +30,8 @@
                 <h1>Fianzo</h1>
                 <form class="form-horizontal" action="{{url_for('login')}}" method="POST">
                     <fieldset>
-                        <div class="control-group">
-                            <label class="control-label" for="username">User</label>
-                            <div class="controls">
-                                <input type="text" class="input-xlarge" name="username" autocomplete="false" placeholder="User name" required autofocus/>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="password">Password</label>
-                            <div class="controls">
-                                <input type="password" class="input-xlarge" name="password" placeholder="Password" required/>
-                            </div>
-                        </div>
+                        {{ m.render_field(form.username, autocomplete="off", required="true", autofocus="true") }}
+                        {{ m.render_field(form.password, required="true") }}
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">Login</button>
                         </div>
