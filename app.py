@@ -154,7 +154,8 @@ def logout():
 def show_assets():
     types = AssetType.query.all()
     overdue_assets = Asset.query.filter(Asset.loan_ends_at < datetime.now())
-    return render_template('show_assets.html', types = types, overdue_assets = overdue_assets)
+    return render_template(
+            'show_assets.html', types = types, overdue_assets = overdue_assets)
 
 
 @app.route('/asset/<int:asset_id>/lend', methods=['POST', 'GET'])
@@ -166,25 +167,24 @@ def lend_asset(asset_id):
         flash('%s is already lent' % asset.name)
         return redirect(url_for('show_assets'))
 
-    if request.method == 'GET':
-        return render_template('lend_asset.html', asset_id=asset_id)
-    elif request.method == 'POST':
-        dn = ldap.getDN(request.form['lended_to'])
-        if not dn:
-            return render_template('lend_asset.html',
-                    asset_id=asset_id,
-                    error='%s not found' % request.form['lended_to'])
-        
-        asset.lended_to = dn
-        asset.loan_ends_at = datetime.now() + asset.type.loan_period
-        log = AssetLog(dn, 'lend', session['username'], asset=asset)
-        db.session.add(asset)
-        db.session.add(log)
-        db.session.commit()
+    form = forms.lendForm(request.form)
+    if request.method == 'POST'and form.validate():
+        dn = ldap.getDN(form.lended_to.data)
+        if dn:
+            asset.lended_to = dn
+            asset.loan_ends_at = datetime.now() + asset.type.loan_period
+            log = AssetLog(dn, 'lend', session['username'], asset=asset)
+            db.session.add(asset)
+            db.session.add(log)
+            db.session.commit()
+            flash('Lended %s to %s' % (asset.name, asset.lended_to_name()))
+            return redirect(url_for('show_assets'))
+        else:
+            form.lended_to.errors.append(
+                    'User %s not found' % form.lended_to.data)
 
-        flash('Lended %s to %s' % (asset.name, asset.lended_to_name()))
-
-        return redirect(url_for('show_assets'))
+    print form.lended_to.errors
+    return render_template('lend_asset.html', asset_id=asset_id, form=form)
 
 
 @app.route('/asset/(<int:asset_id>/return')
