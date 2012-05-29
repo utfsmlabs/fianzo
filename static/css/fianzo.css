@@ -15,7 +15,8 @@ body {
 }
 
 #types-list h2:hover {
-    background: #eee;
+    background: #eee -webkit-linear-gradient(top, whiteSmoke, #ddd);
+    border-radius: 3px;
 }
 
 #login-form {
@@ -35,4 +36,22 @@ body {
 
 #login-form form, #login-form .form-actions{
     margin-bottom: 0;
+}
+
+#edit-table {
+    margin-top: 20px;
+}
+
+#edit-table tr.asset-type td {
+    background: #333 -webkit-linear-gradient(top, #333, #181818);
+    color: white;
+}
+
+#edit-table tr.asset-type:hover td {
+    background: #383838 -webkit-linear-gradient(top, #383838, #222);
+    color: white;
+}
+
+#edit-table .actions {
+    width: 10em;
 }

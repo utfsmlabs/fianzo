@@ -1,30 +1,46 @@
 {% extends "edit_common.html" %}
 {% block body %}
-<div class="page-header">
-    <h1>Lending</h1>
-</div>
 <div class="row-fluid">
     <div id="assets-edit-list" class="span12">
         <div class="btn-group">
-            <a class="btn">New asset type</a>
-            <a class="btn">New asset</a>
+            <a class="btn"><i class="icon-plus-sign"></i>New asset type</a>
         </div>
-        <ul>
-        {% for type in types %}
-        <li>
-        <a href="#" class="btn btn-danger btn-small"><i class="icon-remove icon-white"></i></a>
-        <strong>{{type.name}}</strong>
-        <ul>
-            {% for asset in type.assets %}
-            <li>
-            <a href="#" class="btn btn-danger btn-mini"><i class="icon-remove icon-white"></i></a>
-            {{asset.name}}
-            </li>
-            {% endfor %}
-        </ul>
-        </li>
-        {% endfor %}
-        </ul>
+        <div id="edit-table">
+            <table class="table">
+                {% for type in types %}
+                <tbody>
+                <tr class="asset-type">
+                    <td class="description"><strong>{{type.name}}</strong></td>
+                    <td class="actions">
+                        <div class="btn-group">
+                            <a class="btn btn-mini">
+                                <i class="icon-edit"></i>Edit</a>
+                            <a class="btn btn-mini btn-danger">
+                                <i class="icon-remove-sign icon-white"></i>Remove</a>
+                        </div>
+                    </td>
+                    <td class="actions">
+                        <a class="btn btn-mini btn-primary">
+                            <i class="icon-plus-sign icon-white"></i>New asset</a>
+                    </td>
+                </tr>
+                {% for asset in type.assets %}
+                <tr class="asset">
+                    <td class="description">{{asset.name}}</td>
+                    <td class="actions" colspan="2">
+                        <div class="btn-group">
+                            <a class="btn btn-mini">
+                                <i class="icon-edit"></i>Edit</a>
+                            <a class="btn btn-mini btn-danger">
+                                <i class="icon-remove-sign icon-white"></i>Remove</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
