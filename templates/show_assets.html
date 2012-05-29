@@ -5,9 +5,13 @@
         {% for type in types %}
         <h2><a href="#" data-toggle="collapse" data-target="#assets-{{type.id}}">{{type.name}}</a></h2>
         <div class="collapse" id="assets-{{type.id}}">
-            <table class="assets-table table table-bordered">
+            <table class="assets-table table table-stripped">
                 <thead>
-                    <tr><th>Name</th><th>Status</th><th>Action</th></tr>
+                    <tr>
+                        <th><i class="icon-asterisk"></i>Asset</th>
+                        <th><i class="icon-tag"></i>Status</th>
+                        <th><i class="icon-share-alt"></i>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
                     {% for asset in type.assets %}
