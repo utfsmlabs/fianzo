@@ -7,3 +7,5 @@ class loginForm(Form):
 class lendForm(Form):
     lended_to = TextField('Username', [validators.required()])
 
+class AssetTypeForm(Form):
+    name = TextField('Name', [validators.required()])

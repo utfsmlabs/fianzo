@@ -53,3 +53,9 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro submit_button(text='Submit', extra_classes='btn-primary') %}
+<div class="form-actions">
+    <button type="submit" class="btn {{extra_classes}}">{{text}}</button>
+</div>
+{% endmacro %}

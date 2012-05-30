@@ -6,9 +6,7 @@
         <form class="form-horizontal" method="POST" action="{{url_for('lend_asset', asset_id = asset_id)}}">
             <fieldset>
                 {{ m.render_field(form.lended_to, autocomplete="off", autofocus="true") }}
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Lend</button>
-                </div>
+                {{ m.submit_button('Lend') }}
             </fieldset>
         </form>
     </div>

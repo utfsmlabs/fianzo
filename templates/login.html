@@ -32,9 +32,7 @@
                     <fieldset>
                         {{ m.render_field(form.username, autocomplete="off", required="true", autofocus="true") }}
                         {{ m.render_field(form.password, required="true") }}
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </div>
+                        {{ m.submit_button('Login') }}
                     </fieldset>
                 </form>
             </div>

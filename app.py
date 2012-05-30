@@ -121,6 +121,7 @@ def requires_auth(f):
         if 'username' in session:
             return f(*args, **kwargs)
         else:
+            flash('This page requires login')
             return redirect(url_for('login'))
     return decorated
 
@@ -187,7 +188,7 @@ def lend_asset(asset_id):
     return render_template('lend_asset.html', asset_id=asset_id, form=form)
 
 
-@app.route('/asset/(<int:asset_id>/return')
+@app.route('/asset/<int:asset_id>/return')
 @requires_auth
 def return_asset(asset_id):
     asset = Asset.query.get_or_404(asset_id)
@@ -213,6 +214,20 @@ def return_asset(asset_id):
 def show_assets_for_edit():
     types = AssetType.query.all()
     return render_template('show_assets_for_edit.html', types = types)
+
+
+@app.route('/asset_type/new', methods=['POST', 'GET'])
+@requires_auth
+def new_asset_type():
+    form = forms.AssetTypeForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        type = AssetType(form.name.data)
+        db.session.add(type)
+        db.session.commit()
+        return redirect(url_for('show_assets_for_edit'))
+    else:
+        return  render_template('asset_type_form.html', form=form)
 
 
 @app.route('/log/<int:page>')

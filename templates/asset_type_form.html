@@ -1,0 +1,11 @@
+{% extends "edit_common.html" %}
+{% import "macros.html" as m %}
+{% block body %}
+<form class="form-horizontal" action="{{url_for('new_asset_type')}}" method="POST">
+    <fieldset>
+        {{ m.render_field(form.name, required="true", autofocus="true") }}
+        {{ m.submit_button('Add asset type') }}
+    </fieldset>
+</form>
+{% endblock %}
+
