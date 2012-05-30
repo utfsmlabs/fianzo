@@ -18,6 +18,7 @@ class default_config:
     LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
     SECRET_KEY = 'development secret key'
     ADMINS = set(['javier.aravena'])
+    IGNORE_AUTH = False
 
 app = Flask(__name__)
 app.config.from_object(default_config)
@@ -118,7 +119,7 @@ class AssetLog(db.Model):
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if 'username' in session:
+        if app.config['IGNORE_AUTH'] or 'username' in session:
             return f(*args, **kwargs)
         else:
             flash('This page requires login')
