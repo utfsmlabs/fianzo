@@ -41,7 +41,7 @@ class AssetType(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     loan_period = db.Column(db.Interval, nullable=False)
 
-    assets = db.relationship('Asset', backref='type')
+    assets = db.relationship('Asset', backref='type', cascade='all, delete, delete-orphan')
 
     def __init__(self, name, loan_period = timedelta(minutes=90)):
         self.name = name
@@ -61,7 +61,7 @@ class Asset(db.Model):
     lended_to = db.Column(db.String)
     loan_ends_at = db.Column(db.DateTime(timezone=True))
 
-    logs = db.relationship('AssetLog', backref='asset')
+    logs = db.relationship('AssetLog', backref='asset', cascade='all, delete, delete-orphan')
 
     def __init__(self, name, type=None, type_id=None):
         self.name = name
@@ -117,6 +117,10 @@ class AssetLog(db.Model):
 
 
 def requires_auth(f):
+    '''
+    Decorator that checks wether the user is logged in and redirects
+    to the login form if he isn't
+    '''
     @wraps(f)
     def decorated(*args, **kwargs):
         if app.config['IGNORE_AUTH'] or 'username' in session:
@@ -128,6 +132,9 @@ def requires_auth(f):
 
 @app.context_processor
 def user_processor():
+    '''
+    Makes the user name available to the templates
+    '''
     u = None
     if 'username' in session:
         u = session['username']
@@ -229,6 +236,36 @@ def new_asset_type():
         return redirect(url_for('show_assets_for_edit'))
     else:
         return  render_template('asset_type_form.html', form=form)
+
+
+@app.route('/asset_type/<int:asset_type_id>/delete')
+@requires_auth
+def ask_delete_asset_type(asset_type_id):
+    type = AssetType.query.get_or_404(asset_type_id)
+    return  render_template('confirm.html',
+            title = 'Remove asset type',
+            message = 'Do you want to remove %s' % type.name,
+            actions = [
+                ('Cancel', url_for('show_assets_for_edit')),
+                ('Delete', url_for('delete_asset_type', asset_type_id=asset_type_id))
+                ]
+            )
+
+@app.route('/asset_type/<int:asset_type_id>/delete/confirm')
+@requires_auth
+def delete_asset_type(asset_type_id):
+    type = AssetType.query.get_or_404(asset_type_id)
+    name = type.name
+    db.session.delete(type)
+    db.session.commit()
+    flash('Deleted type %s' % name)
+    return redirect(url_for('show_assets_for_edit'))
+
+
+@app.route('/asset_type/<int:asset_type_id>', methods=['POST', 'GET'])
+@requires_auth
+def edit_asset_type(asset_type_id):
+    pass
 
 
 @app.route('/log/<int:page>')

@@ -13,9 +13,11 @@
                     <td class="description"><strong>{{type.name}}</strong></td>
                     <td class="actions">
                         <div class="btn-group">
-                            <a class="btn btn-mini">
+                            <a class="btn btn-mini"
+                                href="{{url_for('edit_asset_type', asset_type_id = type.id)}}">
                                 <i class="icon-edit"></i>Edit</a>
-                            <a class="btn btn-mini btn-danger">
+                            <a class="btn btn-mini btn-danger" 
+                                href="{{url_for('ask_delete_asset_type', asset_type_id = type.id)}}">
                                 <i class="icon-remove-sign icon-white"></i>Remove</a>
                         </div>
                     </td>

@@ -1,0 +1,13 @@
+{% extends "edit_common.html" %}
+{% block title %} 
+{%- if title -%}
+— {{title}}
+{%- endif -%}
+{% endblock %}
+{% block body %}
+<p>{{message}}</p>
+{% for action in actions %}
+<a href="{{action[1]}}" class="btn">{{action[0]}}</a> 
+{% endfor %}
+
+{% endblock %}
