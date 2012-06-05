@@ -33,7 +33,8 @@
                         <div class="btn-group">
                             <a class="btn btn-mini">
                                 <i class="icon-edit"></i>Edit</a>
-                            <a class="btn btn-mini btn-danger">
+                            <a class="btn btn-mini btn-danger"
+                                href="{{url_for('ask_delete_asset', asset_id = asset.id)}}">
                                 <i class="icon-remove-sign icon-white"></i>Remove</a>
                         </div>
                     </td>

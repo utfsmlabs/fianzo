@@ -18,7 +18,7 @@ class default_config:
     LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
     SECRET_KEY = 'development secret key'
     ADMINS = set(['javier.aravena'])
-    IGNORE_AUTH = False
+    IGNORE_AUTH = True
 
 app = Flask(__name__)
 app.config.from_object(default_config)
@@ -288,6 +288,30 @@ def show_log(page):
 @app.route('/log/')
 def redirect_to_show_log():
     return redirect(url_for('show_log', page=1))
+
+
+@app.route('/asset/<int:asset_id>/delete')
+@requires_auth
+def ask_delete_asset(asset_id):
+    asset = Asset.query.get_or_404(asset_id)
+    return  render_template('confirm.html',
+            title = 'Remove asset',
+            message = 'Do you want to remove %s' % asset.name,
+            actions = [
+                ('Cancel', url_for('show_assets_for_edit')),
+                ('Delete', url_for('delete_asset', asset_id=asset_id))
+                ]
+            )
+
+@app.route('/asset/<int:asset_id>/delete/confirm')
+@requires_auth
+def delete_asset(asset_id):
+    asset = Asset.query.get_or_404(asset_id)
+    name = asset.name
+    db.session.delete(asset)
+    db.session.commit()
+    flash('Deleted type %s' % name)
+    return redirect(url_for('show_assets_for_edit'))
 
 
 if __name__ == '__main__':
