@@ -235,7 +235,7 @@ def new_asset_type():
         db.session.commit()
         return redirect(url_for('show_assets_for_edit'))
     else:
-        return  render_template('asset_type_form.html', form=form)
+        return  render_template('asset_type_form.html', form=form, action_url=url_for('new_asset_type'))
 
 
 @app.route('/asset_type/<int:asset_type_id>/delete')
@@ -265,7 +265,16 @@ def delete_asset_type(asset_type_id):
 @app.route('/asset_type/<int:asset_type_id>', methods=['POST', 'GET'])
 @requires_auth
 def edit_asset_type(asset_type_id):
-    pass
+    type = AssetType.query.get_or_404(asset_type_id)
+    form = forms.AssetTypeForm(request.form, type)
+    if request.method == 'POST' and form.validate():
+        type.name = form.name.data
+        db.session.add(type)
+        db.session.commit()
+        flash('Asset type edited succesfully')
+        return redirect(url_for('show_assets_for_edit'))
+    return render_template('asset_type_form.html', form = form, action_url = url_for(
+        'edit_asset_type', asset_type_id=asset_type_id))
 
 
 @app.route('/log/<int:page>')
