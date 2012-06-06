@@ -4,6 +4,20 @@
 <form class="form-horizontal" action="{{action_url}}" method="POST">
     <fieldset>
         {{ m.render_field(form.name, required="true", autofocus="true") }}
+        <div class="control-group">
+            <label class="control-label" for="loan_period_number">Loan duration</label>
+            <div class="controls">
+                {{ form.loan_period_number(required="true")|safe }} 
+                {{ form.loan_period_resolution(required="true")|safe }}
+                {% if form.loan_period_number.errors or form.loan_period_resolution.errors %}
+                <div class="errors">
+                    {% for error in form.loan_period_number.errors + form.loan_period_resolution.errors%}
+                    <p><span class="label label-important">{{ error }}</span></p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
         {{ m.submit_button('Submit') }}
     </fieldset>
 </form>
