@@ -48,7 +48,7 @@ class AssetType(db.Model):
         self.loan_period = loan_period
     
     def __repr__(self):
-        return '<Aset type %r>' % self.description
+        return '<Aset type %r>' % self.name
 
 
 class Asset(db.Model):
@@ -231,11 +231,16 @@ def new_asset_type():
 
     if request.method == 'POST' and form.validate():
         type = AssetType(form.name.data)
+        period = timedelta(days = form.loan_period_days.data,
+                hours = form.loan_period_hours.data,
+                minutes = form.loan_period_minutes.data)
+        type.loan_period = period
         db.session.add(type)
         db.session.commit()
         return redirect(url_for('show_assets_for_edit'))
     else:
-        return  render_template('asset_type_form.html', form=form, action_url=url_for('new_asset_type'))
+        return  render_template('asset_type_form.html',
+                form=form, action_url=url_for('new_asset_type'))
 
 
 @app.route('/asset_type/<int:asset_type_id>/delete')
@@ -266,15 +271,26 @@ def delete_asset_type(asset_type_id):
 @requires_auth
 def edit_asset_type(asset_type_id):
     type = AssetType.query.get_or_404(asset_type_id)
+
     form = forms.AssetTypeForm(request.form, type)
+
     if request.method == 'POST' and form.validate():
         type.name = form.name.data
+        period = timedelta(days = form.loan_period_days.data,
+                hours = form.loan_period_hours.data,
+                minutes = form.loan_period_minutes.data)
+        type.loan_period = period
+
         db.session.add(type)
         db.session.commit()
         flash('Asset type edited succesfully')
         return redirect(url_for('show_assets_for_edit'))
-    return render_template('asset_type_form.html', form = form, action_url = url_for(
-        'edit_asset_type', asset_type_id=asset_type_id))
+    else:
+        form.loan_period_days.data = type.loan_period.days
+        form.loan_period_hours.data = type.loan_period.seconds / 3600
+        form.loan_period_minutes.data = (type.loan_period.seconds % 3600) / 60
+        return render_template('asset_type_form.html', form = form,
+                action_url = url_for( 'edit_asset_type', asset_type_id=asset_type_id))
 
 
 @app.route('/log/<int:page>')

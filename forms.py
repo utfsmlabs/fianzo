@@ -9,9 +9,13 @@ class lendForm(Form):
 
 class AssetTypeForm(Form):
     name = TextField('Name', [validators.required()])
-    loan_period_number = IntegerField('Lend time', [validators.NumberRange(min=0), validators.required()])
-    loan_period_resolution = SelectField('Lend time resolution', [validators.required()], 
-            choices=[('d', 'Days'), ('h', 'Hours'), ('m', 'Minutes')])
+    loan_period_days = IntegerField('Loan days', 
+            [validators.NumberRange(min=0)], default=0)
+    loan_period_hours = IntegerField('Loan hours', 
+            [validators.NumberRange(min=0)], default=1)
+    loan_period_minutes = IntegerField('Loan minutes', 
+            [validators.NumberRange(min=0)], default=30)
 
 class AssetForm(Form):
     name = TextField('Name', [validators.required()])
+

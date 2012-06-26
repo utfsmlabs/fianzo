@@ -3,15 +3,16 @@
 {% block body %}
 <form class="form-horizontal" action="{{action_url}}" method="POST">
     <fieldset>
-        {{ m.render_field(form.name, required="true", autofocus="true") }}
+        {{ m.render_field(form.name, required="true", autofocus="true", class="span4") }}
         <div class="control-group">
-            <label class="control-label" for="loan_period_number">Loan duration</label>
+            <label class="control-label" for="loan_period_number">Loan period</label>
             <div class="controls">
-                {{ form.loan_period_number(required="true")|safe }} 
-                {{ form.loan_period_resolution(required="true")|safe }}
-                {% if form.loan_period_number.errors or form.loan_period_resolution.errors %}
+                {{ form.loan_period_days(class="span1")|safe }} Days
+                {{ form.loan_period_hours(class="span1")|safe }} Hours
+                {{ form.loan_period_minutes(class="span1")|safe }} Minutes
+                {% if form.loan_period_days.errors or form.loan_period_hours.errors or form.loan_period_minutes.errors%}
                 <div class="errors">
-                    {% for error in form.loan_period_number.errors + form.loan_period_resolution.errors%}
+                    {% for error in form.loan_period_days.errors + form.loan_period_hours.errors + form.loan_period_minutes.errors%}
                     <p><span class="label label-important">{{ error }}</span></p>
                     {% endfor %}
                 </div>
