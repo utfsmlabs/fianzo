@@ -116,6 +116,12 @@ class AssetLog(db.Model):
         return ldapUsers.extractNamingAttribute(self.lended_to)
 
 
+class Ban(db.Model):
+    id = db.Column(db.Integer, primary_key = True, nullable=False)
+    user = db.Column(db.String, nullable = False)
+    banned_until = db.Column(db.DateTime, nullable=False)
+
+
 def requires_auth(f):
     '''
     Decorator that checks wether the user is logged in and redirects
