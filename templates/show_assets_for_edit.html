@@ -22,7 +22,8 @@
                         </div>
                     </td>
                     <td class="actions">
-                        <a class="btn btn-mini btn-primary">
+                        <a class="btn btn-mini btn-primary" 
+                            href="{{url_for('new_asset', type_id=type.id)}}">
                             <i class="icon-plus-sign icon-white"></i>New asset</a>
                     </td>
                 </tr>
@@ -31,7 +32,8 @@
                     <td class="description">{{asset.name}}</td>
                     <td class="actions" colspan="2">
                         <div class="btn-group">
-                            <a class="btn btn-mini">
+                            <a class="btn btn-mini" 
+                                href="{{url_for('edit_asset', asset_id=asset.id)}}">
                                 <i class="icon-edit"></i>Edit</a>
                             <a class="btn btn-mini btn-danger"
                                 href="{{url_for('ask_delete_asset', asset_id = asset.id)}}">

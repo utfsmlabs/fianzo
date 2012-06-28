@@ -1,0 +1,10 @@
+{% extends "edit_common.html" %}
+{% import "macros.html" as m %}
+{% block body %}
+<form class="form-horizontal" action="{{action_url}}" method="POST">
+    <fieldset>
+        {{ m.render_field(form.name, required="true", autofocus="true", class="span4") }}
+        {{ m.submit_button('Submit') }}
+    </fieldset>
+</form>
+{% endblock %}

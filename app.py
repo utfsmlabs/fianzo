@@ -18,7 +18,7 @@ class default_config:
     LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
     SECRET_KEY = 'development secret key'
     ADMINS = set(['javier.aravena'])
-    IGNORE_AUTH = True
+    IGNORE_AUTH = False
 
 app = Flask(__name__)
 app.config.from_object(default_config)
@@ -305,6 +305,33 @@ def show_log(page):
 def redirect_to_show_log():
     return redirect(url_for('show_log', page=1))
 
+
+@app.route('/asset_type/<int:type_id>/new_asset', methods=['GET', 'POST'])
+@requires_auth
+def new_asset(type_id):
+    type = AssetType.query.get_or_404(type_id)
+    form = forms.AssetForm(request.form)
+    if request.method == 'POST' and form.validate():
+        asset = Asset(form.name.data, type = type)
+        db.session.add(asset)
+        db.session.commit()
+        return redirect(url_for('show_assets_for_edit'))
+    else:
+        return render_template('asset_form.html', form = form)
+
+
+@app.route('/asset/<int:asset_id>', methods=['GET', 'POST'])
+@requires_auth
+def edit_asset(asset_id):
+    asset = Asset.query.get_or_404(asset_id)
+    form = forms.AssetForm(request.form, asset)
+    if request.method == 'POST' and form.validate():
+        asset.name = form.name.data
+        db.session.add(asset)
+        db.session.commit()
+        return redirect(url_for('show_assets_for_edit'))
+    else:
+        return render_template('asset_form.html', form = form)
 
 @app.route('/asset/<int:asset_id>/delete')
 @requires_auth
