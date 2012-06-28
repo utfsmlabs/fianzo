@@ -98,7 +98,7 @@ class AssetLog(db.Model):
     time = db.Column(db.DateTime(timezone=True), nullable=False)
     action = db.Column(db.Enum('lend', 'return'), nullable=False)
     lended_to = db.Column(db.String, nullable=False)
-    return_status = db.Column(db.Enum('regular', 'late'), nullable=False)
+    return_status = db.Column(db.Enum('regular', 'late'))
     action_by = db.Column(db.String, nullable=False)
 
     def __init__(self, lended_to, action, action_by, asset=None, asset_id=None):
@@ -177,7 +177,7 @@ def lend_asset(asset_id):
         return redirect(url_for('show_assets'))
 
     form = forms.lendForm(request.form)
-    if request.method == 'POST'and form.validate():
+    if request.method == 'POST' and form.validate():
         dn = ldap.getDN(form.lended_to.data)
         if dn:
             asset.lended_to = dn
