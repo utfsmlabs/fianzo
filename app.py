@@ -12,7 +12,7 @@ import forms
 
 class default_config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///asdf.db'
-    DEBUG = True
+    DEBUG = False
     LDAP_URI = 'ldap://localhost:3890'
     LDAP_SEARCH_ATTR = 'uid'
     LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
@@ -117,9 +117,19 @@ class AssetLog(db.Model):
 
 
 class Ban(db.Model):
+    '''
+    Indicates the banning of a user
+    '''
     id = db.Column(db.Integer, primary_key = True, nullable=False)
     user = db.Column(db.String, nullable = False)
-    banned_until = db.Column(db.DateTime, nullable=False)
+    banned_until = db.Column(db.DateTime)
+    times_banned = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, user, banned_until=None, times_banned=0):
+        self.user = user
+        self.banned_until = banned_until
+        self.times_banned = times_banned
+
 
 
 def requires_auth(f):
