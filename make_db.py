@@ -1,6 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+from app import db, AssetType, Asset, app
+from pprint import PrettyPrinter
 
-from app import db, AssetType, Asset
+pp = PrettyPrinter(indent=4)
+pp.pprint(app.config)
+
 db.drop_all()
 db.create_all()
 

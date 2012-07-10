@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 from datetime import datetime, timedelta
 from functools import wraps
@@ -20,9 +20,10 @@ class default_config:
     ADMINS = set(['javier.aravena'])
     IGNORE_AUTH = False
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
 app.config.from_object(default_config)
 app.config.from_envvar('FIANZO_SETTINGS', silent=True)
+app.config.from_pyfile('fianzo.cfg', silent=True)
 
 db = SQLAlchemy(app)
 
@@ -96,9 +97,9 @@ class AssetLog(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable=False)
     asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=False)
     time = db.Column(db.DateTime(timezone=True), nullable=False)
-    action = db.Column(db.Enum('lend', 'return'), nullable=False)
+    action = db.Column(db.Enum('lend', 'return', name='action_enum'), nullable=False)
     lended_to = db.Column(db.String, nullable=False)
-    return_status = db.Column(db.Enum('regular', 'late'))
+    return_status = db.Column(db.Enum('regular', 'late', name='status_enum'))
     action_by = db.Column(db.String, nullable=False)
 
     def __init__(self, lended_to, action, action_by, asset=None, asset_id=None):
