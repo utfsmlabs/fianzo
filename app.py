@@ -60,7 +60,7 @@ class Asset(db.Model):
     name = db.Column(db.String, nullable=False)
     type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'), nullable=False)
     lended_to = db.Column(db.String)
-    loan_ends_at = db.Column(db.DateTime(timezone=True))
+    loan_ends_at = db.Column(db.DateTime())
 
     logs = db.relationship('AssetLog', backref='asset', cascade='all, delete, delete-orphan')
 
@@ -96,7 +96,7 @@ class AssetLog(db.Model):
     '''
     id = db.Column(db.Integer, primary_key = True, nullable=False)
     asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=False)
-    time = db.Column(db.DateTime(timezone=True), nullable=False)
+    time = db.Column(db.DateTime(), nullable=False)
     action = db.Column(db.Enum('lend', 'return', name='action_enum'), nullable=False)
     lended_to = db.Column(db.String, nullable=False)
     return_status = db.Column(db.Enum('regular', 'late', name='status_enum'))
@@ -179,7 +179,8 @@ def logout():
 @requires_auth
 def show_assets():
     types = AssetType.query.all()
-    overdue_assets = Asset.query.filter(Asset.loan_ends_at < datetime.now())
+    overdue_assets = Asset.query.filter(
+        Asset.loan_ends_at < datetime.now()).order_by(Asset.name)
     return render_template(
             'show_assets.html', types = types, overdue_assets = overdue_assets)
 
