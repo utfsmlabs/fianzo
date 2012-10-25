@@ -1,0 +1,19 @@
+#SQLAlchemy connection string.
+#See http://docs.sqlalchemy.org/en/rel_0_7/core/engines.html
+SQLALCHEMY_DATABASE_URI = 'postgresql://user:pass@host'
+
+#LDAP server
+LDAP_URI = 'ldap://example.com'
+
+#LDAP BaseDN
+LDAP_BASEDN = ''
+
+#Attribute to identify users
+LDAP_SEARCH_ATTR = 'uid'
+
+#Random key
+SECRET_KEY = 'secret key'
+
+#Users from LDAP that can log into the system.
+ADMINS = set([])
+

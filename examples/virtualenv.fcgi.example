@@ -1,0 +1,24 @@
+#!/[virtualenv directory]/bin/python
+
+from flup.server.fcgi import WSGIServer
+from app import app
+import os
+
+virtual_env = '[virtualenv directory]'
+app_dir = '[fianzo directory]'
+
+os.environ.setdefault('PATH', '/bin:/usr/bin')
+os.environ['PATH'] = virtual_env + '/bin:' + os.environ['PATH']
+os.environ['VIRTUAL_ENV'] = virtual_env
+
+os.chdir(app_dir)
+
+import sys
+sys.path.insert(0, app_dir)
+
+os.environ['FIANZO_SETTINGS'] = app_dir + 'config.py'
+
+
+if __name__ == '__main__':
+    WSGIServer(app).run()
+
