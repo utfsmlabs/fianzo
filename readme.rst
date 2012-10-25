@@ -14,8 +14,9 @@ http://flask.pocoo.org/docs/deploying/.
 Dependences
 ===========
 * Flask 0.8
-* Flask-SQLAlchemy 0.16
+* Flask-SQLAlchemy >0.16
 * WTForms
+* python-ldap
 
 And python bindings to the database engine of your choice
 
@@ -45,3 +46,7 @@ IGNORE_AUTH
     Debug Flag, leave it off unless you want to let every page open (and you
     don't want to do that).
 
+Licensing
+=========
+
+Fianzo is licensed under the terms of the GPLv3 license.
