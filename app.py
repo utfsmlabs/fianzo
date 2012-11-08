@@ -23,6 +23,7 @@ from functools import wraps
 from flask import Flask, render_template, jsonify, request, flash, redirect,\
         abort, url_for, session
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 
 import ldapUsers
 import forms
@@ -76,7 +77,7 @@ class Asset(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable=False)
     name = db.Column(db.String, nullable=False)
     type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'), nullable=False)
-    lended_to = db.Column(db.String)
+    lended_to = db.Column(db.String) #if this is None/NULL then it's available
     loan_ends_at = db.Column(db.DateTime())
 
     logs = db.relationship('AssetLog', backref='asset', cascade='all, delete, delete-orphan')
@@ -197,9 +198,11 @@ def logout():
 def show_assets():
     types = AssetType.query.all()
     overdue_assets = Asset.query.filter(
-        Asset.loan_ends_at < datetime.now()).order_by(Asset.name)
-    return render_template(
-            'show_assets.html', types = types, overdue_assets = overdue_assets)
+            Asset.loan_ends_at < datetime.now()).order_by(Asset.name)
+    unavailable_assets = Asset.query.filter(
+            Asset.lended_to != None, Asset.lended_to != '')
+    return render_template('show_assets.html', 
+            types = types, overdue_assets = overdue_assets, unavailable_assets = unavailable_assets)
 
 
 @app.route('/asset/<int:asset_id>/lend', methods=['POST', 'GET'])

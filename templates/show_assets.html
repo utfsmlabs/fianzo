@@ -64,15 +64,30 @@ along with Fianzo.  If not, see <http://www.gnu.org/licenses/>.
         {% endfor %}
     </div>
     <div id="sidebar" class="span4">
-        <div id="overdue">
+        <div id="overdue" class="well well-small">
             <h2>Overdue</h2>
             {% for asset in overdue_assets %}
             <p>
-            <a href="{{url_for('return_asset', asset_id=asset.id)}}" class="btn btn-mini btn-primary">
+            <a href="{{url_for('return_asset', asset_id=asset.id)}}" class="btn btn-mini btn-warning">
                 <i class="icon-check icon-white"></i>Return</a>
+            <strong>{{asset.name}}</strong> - 
+            <em>{{asset.type.name}}</em> ({{asset.lended_to_name()}})
+            </p>
+            {% else %}
+            <p class="muted"><small>There aren't overdue items right now.<small></p>
+            {% endfor %}
+        </div>
+        <div id="overdue" class="well well-small">
+            <h2>Unavailable</h2>
+            {% for asset in  unavailable_assets %}
+            <p>
+            <a href="{{url_for('return_asset', asset_id=asset.id)}}" class="btn btn-mini">
+                <i class="icon-check icon-black"></i>Return</a>
             <strong>{{asset.name}}</strong> - 
             <em>{{asset.type.name}}</em> ({{asset.lended_to_name()}}) 
             </p>
+            {% else %}
+            <p class="muted"><small>All items are available.</small></p>
             {% endfor %}
         </div>
     </div>
