@@ -25,7 +25,7 @@ along with Fianzo.  If not, see <http://www.gnu.org/licenses/>.
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fianzo.css') }}" />
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-responsive.css')}}"/>
         <script src="{{ url_for('static', filename='js/modernizr.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/jquery-1.7.2.js') }}"> </script>
+        <script src="{{ url_for('static', filename='js/jquery-1.8.2.js') }}"> </script>
         <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap-collapse.js') }}"></script>
         {% block head_extra %}{% endblock %}
@@ -50,7 +50,7 @@ along with Fianzo.  If not, see <http://www.gnu.org/licenses/>.
                         </ul>
                         <div class="nav pull-right">
                             {% block session_action %}
-                            <a class="btn btn-inverse" href="{{ url_for('logout') }}">Logout</a>
+                            <a class="btn btn-white" href="{{ url_for('logout') }}">Logout</a>
                             {% endblock %}
                         </div>
                     </div>

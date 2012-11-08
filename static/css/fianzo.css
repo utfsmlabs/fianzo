@@ -1,11 +1,24 @@
+@import url(http://fonts.googleapis.com/css?family=Pacifico);
+
 body {
     padding-top: 60px;
 }
 
+h2 {
+    font-size: 24.5px;
+}
+
 #navbar-logo {
-    color: #fff;
+    color: #333;
     font-weight: bold;
-    text-shadow: rgba(0, 0, 0, 0.5) 2px 2px 4px;
+    text-shadow: rgba(0, 0, 0, 0.5) 0 0 2px;
+    font-family: 'Pacifico', cursive;
+
+    -webkit-transform: rotate(-5deg);
+    -moz-transform: rotate(10deg);
+    -o-transform: rotate(10deg);
+    -ms-transform: rotate(10deg);
+    transform: rotate(10deg);
 }
 
 #types-list h2 a {
@@ -16,6 +29,10 @@ body {
 
 #types-list h2:hover {
     background: #eee -webkit-linear-gradient(top, whiteSmoke, #ddd);
+    background: #eee -moz-linear-gradient(top, whiteSmoke, #ddd);
+    background: #eee -o-linear-gradient(top, whiteSmoke, #ddd);
+    background: #eee -ms-linear-gradient(top, whiteSmoke, #ddd);
+    background: #eee linear-gradient(top, whiteSmoke, #ddd);
     border-radius: 3px;
 }
 
@@ -34,7 +51,7 @@ body {
     margin-bottom: 1ex;
 }
 
-#login-form form, #login-form .form-actions{
+#login-form form,#login-form .form-actions {
     margin-bottom: 0;
 }
 
@@ -44,11 +61,19 @@ body {
 
 #edit-table tr.asset-type td {
     background: #333 -webkit-linear-gradient(top, #333, #181818);
+    background: #333 -moz-linear-gradient(top, #333, #181818);
+    background: #333 -o-linear-gradient(top, #333, #181818);
+    background: #333 -ms-linear-gradient(top, #333, #181818);
+    background: #333 linear-gradient(top, #333, #181818);
     color: white;
 }
 
 #edit-table tr.asset-type:hover td {
     background: #383838 -webkit-linear-gradient(top, #383838, #222);
+    background: #383838 -moz-linear-gradient(top, #383838, #222);
+    background: #383838 -o-linear-gradient(top, #383838, #222);
+    background: #383838 -ms-linear-gradient(top, #383838, #222);
+    background: #383838 linear-gradient(top, #383838, #222);
     color: white;
 }
 
