@@ -37,10 +37,10 @@ class default_config:
     ADMINS = set(['javier.aravena'])
     IGNORE_AUTH = False
 
-app = Flask(__name__, instance_relative_config=True)
+app = Flask(__name__)
 app.config.from_object(default_config)
 app.config.from_envvar('FIANZO_SETTINGS', silent=True)
-app.config.from_pyfile('fianzo.cfg', silent=True)
+app.config.from_pyfile('config.py', silent=True)
 
 ldap = ldapUsers.ldapConnection(app)
 db.init_app(app)
@@ -288,7 +288,11 @@ def delete_asset(asset_id):
     flash('Deleted type %s' % name)
     return redirect(url_for('show_assets_for_edit'))
 
+def config_string():
+    s = ['%s = %s\n' % (k, v) for k, v in app.config.iteritems()]
+    return ''.join(s)
 
 if __name__ == '__main__':
+    app.logger.debug(config_string())
     app.run(host='0.0.0.0')
 
