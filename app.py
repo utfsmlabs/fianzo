@@ -36,6 +36,7 @@ class default_config:
     SECRET_KEY = 'development secret key'
     ADMINS = set(['javier.aravena'])
     IGNORE_AUTH = False
+    LOG_FILE = 'fianzo.log'
 
 app = Flask(__name__)
 app.config.from_object(default_config)
@@ -293,6 +294,13 @@ def config_string():
     return ''.join(s)
 
 if __name__ == '__main__':
+    if not app.debug:
+        import logging
+        from logging.handlers import RotatingFileHandler
+        file_handler = RotatingFileHandler(app.config['LOG_FILE'],
+                maxBytes = 1024 * 250, backupCount = 2)
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
     app.logger.debug(config_string())
     app.run(host='0.0.0.0')
 
