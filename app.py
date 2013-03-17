@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Fianzo.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 
 from flask import (Flask, render_template, jsonify, request, flash, redirect,
@@ -29,7 +29,7 @@ import forms
 
 class default_config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///asdf.db'
-    DEBUG = False
+    DEBUG = True
     LDAP_URI = 'ldap://localhost:3890'
     LDAP_SEARCH_ATTR = 'uid'
     LDAP_BASEDN = 'ou=inf,o=utfsm,c=cl'
