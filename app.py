@@ -125,7 +125,6 @@ def lend_asset(asset_id):
             form.lended_to.errors.append(
                     'User %s not found' % form.lended_to.data)
 
-    print form.lended_to.errors
     return render_template('lend_asset.html', asset_id=asset_id, form=form)
 
 
